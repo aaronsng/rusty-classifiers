@@ -1,4 +1,5 @@
 use matfile;
+use std::fmt::Error;
 
 struct Data {
     // data - actual observation value
@@ -8,33 +9,24 @@ struct Data {
 }
 
 impl Data {
-    pub fn new(data_file: &str, label_file: &str) -> Self {
-        let option_data: matfile::MatFile = load(data_file).expect("Cannot load data file!");
-        let option_label: matfile::MatFile = load(label_file).expect("Cannot load label file!");
-        
-        // Extract the data
-        if let Some(curr_data) = option_data.find_by_name("real") {
-            println!("Extracted data {:#?}", curr_data);
-
-            // Extract the label
-            if let Some(curr_label) = option_label.find_by_name("real") {
-                println!("Extracted data {:#?}", curr_label);
-         
-                return Self {
-                    data: curr_data,
-                    label: curr_label
-                }
-            }
-        } else {
-            panic!("Cannot extract data!");
-            Self {
-
-            }
-        }
+    pub fn new(data_file: &str, label_file: &str) -> () {
+        let option_data = load(data_file).expect("Cannot load data file!");
+        let option_label = load(label_file).expect("Cannot load label file!");
     }
 }
 
-fn load(file_location: &str) {
-    let file = std::fs::File::open(file_location).expect("Cannot load file {}", file_location);
+pub fn load(file_location: &str) -> Result<Vec<T>, Error> {
+    let file = std::fs::File::open(file_location).expect("Cannot load file");
     let parsed_file_result = matfile::MatFile::parse(file);
+    let parsed_file = match parsed_file_result {
+        Ok(file) => file,
+        Err(error) => {
+            panic!("Error loading file! {:?}", error);
+        }
+    };
+
+    println!("{:#?}", parsed_file);
+
+    let curr_data = parsed_file.find_by_name("array").expect("Can't find stored array");
+    
 }
