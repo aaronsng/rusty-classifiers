@@ -6,6 +6,5 @@ fn main() {
 
 
     let bayes_classifier = BayesClassifier::new(train_set.get_data(), train_set.get_label(), 0.8);
-    let divided = bayes_classifier.group_by_class(&bayes_classifier.get_train_data(), &bayes_classifier.get_train_label());
-    println!("{:#?}", divided);
+    bayes_classifier.train();
 }
